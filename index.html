@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>FakeOS Mobile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <style>
     html, body {
       margin: 0;
@@ -9,8 +10,8 @@
       font-family: -apple-system, sans-serif;
       background: black;
       overflow: hidden;
-      width: 100vw;
-      height: 100vh;
+      /* base font size for scaling */
+      font-size: calc(12px + 0.8vw);
     }
 
     #phoneOS {
@@ -22,45 +23,53 @@
       color: white;
       overflow: hidden;
       transition: all 0.3s ease;
-      margin: 0 auto;
-      border: none;
+      padding-bottom: env(safe-area-inset-bottom, 15px);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
     }
 
     #statusBar {
-      height: 20px;
+      height: 1.5em;
       background: rgba(0, 0, 0, 0.2);
       backdrop-filter: blur(4px);
-      padding: 5px 10px;
+      padding: 0 1em;
       display: flex;
       justify-content: space-between;
-      font-size: clamp(10px, 1.5vw, 14px);
+      font-size: 1em;
+      line-height: 1.5em;
+      align-items: center;
+      user-select: none;
     }
 
-    #homeScreen {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: clamp(10px, 2vw, 20px);
-      padding: clamp(40px, 5vw, 60px) clamp(20px, 4vw, 40px) clamp(110px, 15vw, 130px);
-      flex-grow: 1;
-      overflow-y: auto;
-      box-sizing: border-box;
-      justify-items: center; /* THIS */
-    }
+	#homeScreen {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1em;
+  padding: 3em 1.25em 6em;
+  flex-grow: 1;
+  justify-items: center;   /* centers each icon in its column */
+  align-content: start;    /* packs all the rows up at the top */
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+
 
     .appIcon {
       text-align: center;
-      font-size: clamp(10px, 2vw, 18px);
+      font-size: 0.9em;
       color: white;
       cursor: pointer;
       user-select: none;
     }
 
     .appIcon img {
-      width: clamp(40px, 10vw, 80px);
-      height: clamp(40px, 10vw, 80px);
-      border-radius: 15px;
-      margin-bottom: 5px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      width: 3.75em;  /* scales with font-size */
+      height: 3.75em;
+      border-radius: 1em;
+      margin-bottom: 0.3em;
+      box-shadow: 0 0.25em 0.625em rgba(0,0,0,0.3);
       transition: transform 0.1s;
     }
 
@@ -69,38 +78,40 @@
     }
 
     #dock {
-      position: absolute;
-      bottom: clamp(8px, 1.5vw, 20px);
-      left: clamp(8px, 1.5vw, 20px);
-      right: clamp(8px, 1.5vw, 20px);
-      height: clamp(50px, 6vw, 80px);
+      position: fixed;
+      bottom: env(safe-area-inset-bottom, 15px);
+      left: 1em;
+      right: 1em;
+      height: 4.375em; /* 70px at 16px base scaled by font-size */
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
-      border-radius: clamp(15px, 3vw, 30px);
+      border-radius: 1.5em;
       display: flex;
       justify-content: space-around;
       align-items: center;
+      z-index: 1000;
+      user-select: none;
     }
 
     #dock .appIcon img {
-      width: clamp(30px, 7vw, 60px);
-      height: clamp(30px, 7vw, 60px);
+      width: 3.125em; /* 50px scaled */
+      height: 3.125em;
     }
 
     .appScreen {
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       background: #000000f0;
       display: none;
       flex-direction: column;
       animation: fadeIn 0.3s ease;
       overflow: auto;
-      padding: clamp(10px, 3vw, 30px);
+      padding: 1.25em 1.25em 1.5em;
       box-sizing: border-box;
-      font-size: clamp(14px, 2vw, 22px);
+      user-select: text;
     }
 
     .appScreen.active {
@@ -113,65 +124,64 @@
     }
 
     button {
-      margin-top: clamp(8px, 2vw, 16px);
-      padding: clamp(8px, 2vw, 16px) clamp(12px, 3vw, 24px);
+      margin-top: 0.625em;
+      padding: 0.625em 1.25em;
       background: white;
       color: black;
       border: none;
-      border-radius: clamp(8px, 2vw, 16px);
+      border-radius: 0.625em;
       cursor: pointer;
       user-select: none;
-      font-size: clamp(14px, 1.8vw, 20px);
-      transition: transform 0.1s;
-    }
-    button:active {
-      transform: scale(0.95);
+      font-size: 1em;
     }
 
     h2 {
-      margin-bottom: clamp(8px, 2vw, 16px);
-      font-size: clamp(18px, 3vw, 36px);
+      margin-bottom: 0.625em;
+      font-size: 1.25em;
     }
 
     /* Browser */
     #browserApp input {
-      padding: clamp(8px, 2vw, 16px);
+      padding: 0.625em;
       width: 80%;
-      margin-bottom: clamp(10px, 2vw, 20px);
-      border-radius: clamp(8px, 2vw, 16px);
+      margin-bottom: 0.625em;
+      border-radius: 0.625em;
       border: none;
-      font-size: clamp(14px, 2vw, 20px);
+      font-size: 1em;
     }
 
     iframe {
       flex: 1;
       width: 100%;
-      height: 300px;
+      height: 18.75em; /* 300px at 16px base */
       border: none;
-      border-radius: clamp(8px, 2vw, 16px);
-      margin-top: clamp(10px, 2vw, 20px);
+      border-radius: 0.625em;
+      margin-top: 0.625em;
     }
 
     /* Notepad */
     #noteText {
       width: 100%;
-      height: 300px;
-      border-radius: clamp(8px, 2vw, 16px);
-      padding: clamp(8px, 2vw, 16px);
-      font-size: clamp(14px, 2vw, 20px);
+      height: 18.75em;
+      border-radius: 0.625em;
+      padding: 0.625em;
+      font-size: 1em;
+      font-family: monospace, monospace;
     }
 
     /* Messages */
     .chat {
       display: flex;
       flex-direction: column;
-      gap: clamp(6px, 1.5vw, 12px);
+      gap: 0.625em;
+      font-size: 1em;
     }
 
     .bubble {
       max-width: 70%;
-      padding: clamp(8px, 2vw, 16px);
-      border-radius: clamp(15px, 3vw, 30px);
+      padding: 0.625em;
+      border-radius: 1em;
+      word-wrap: break-word;
     }
 
     .me {
@@ -191,65 +201,68 @@
       display: flex;
       justify-content: space-between;
       background: #222;
-      padding: clamp(8px, 2vw, 16px);
-      margin-bottom: clamp(8px, 2vw, 16px);
-      border-radius: clamp(8px, 2vw, 16px);
-      font-size: clamp(14px, 2vw, 20px);
+      padding: 0.625em;
+      margin-bottom: 0.625em;
+      border-radius: 0.625em;
+      font-size: 1em;
     }
 
     /* Weather */
     #weatherInfo {
-      margin-top: clamp(12px, 3vw, 24px);
-      font-size: clamp(14px, 2vw, 20px);
+      margin-top: 1.25em;
+      font-size: 1em;
     }
     #cityInput {
-      padding: clamp(8px, 2vw, 16px);
-      border-radius: clamp(8px, 2vw, 16px);
+      padding: 0.625em;
+      border-radius: 0.5em;
       border: none;
       width: 80%;
-      max-width: 300px;
-      margin-bottom: clamp(10px, 2vw, 20px);
-      font-size: clamp(14px, 2vw, 20px);
+      max-width: 18.75em;
+      margin-bottom: 0.625em;
+      font-size: 1em;
     }
 
     /* Camera */
     video, canvas {
       width: 100%;
-      border-radius: clamp(8px, 2vw, 16px);
-      margin-bottom: clamp(10px, 2vw, 20px);
+      border-radius: 0.625em;
+      margin-bottom: 0.625em;
     }
 
     /* Dialer styles */
     #dialerDisplay {
-      font-size: clamp(18px, 3vw, 28px);
-      letter-spacing: 3px;
-      margin-bottom: clamp(15px, 3vw, 30px);
-      min-height: 40px;
+      font-size: 1.75em;
+      letter-spacing: 0.15em;
+      margin-bottom: 0.9375em;
+      min-height: 2.5em;
       background: #222;
-      padding: clamp(10px, 2vw, 20px) clamp(20px, 4vw, 40px);
-      border-radius: clamp(15px, 3vw, 30px);
-      width: 240px;
+      padding: 0.625em 1.25em;
+      border-radius: 1em;
+      width: 15em;
       text-align: center;
       color: white;
       user-select: none;
+      font-family: monospace, monospace;
     }
 
     #dialerButtons {
       display: grid;
-      grid-template-columns: repeat(3, clamp(40px, 8vw, 60px));
-      gap: clamp(8px, 2vw, 12px);
-      margin-bottom: clamp(20px, 4vw, 40px);
+      grid-template-columns: repeat(3, 3.75em);
+      gap: 0.75em;
+      margin-bottom: 1.25em;
+      justify-content: center;
     }
 
     #dialerButtons button {
-      font-size: clamp(16px, 3vw, 18px);
-      border-radius: clamp(15px, 3vw, 30px);
+      font-size: 1.125em;
+      border-radius: 1em;
       background: #444;
       color: white;
       border: none;
       cursor: pointer;
       user-select: none;
       transition: background 0.2s;
+      line-height: 1.2em;
     }
     #dialerButtons button:active {
       background: #666;
@@ -257,14 +270,15 @@
     }
 
     #dialerCloseBtn {
-      width: 100px;
+      width: 8.75em;
       background: #d33;
       color: white;
-      border-radius: clamp(10px, 2vw, 16px);
+      border-radius: 1em;
       cursor: pointer;
       user-select: none;
       border: none;
-      padding: clamp(10px, 2vw, 20px);
+      padding: 0.625em;
+      font-size: 1em;
     }
     #dialerCloseBtn:active {
       background: #a22;
