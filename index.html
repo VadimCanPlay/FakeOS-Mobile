@@ -10,8 +10,8 @@
       font-family: -apple-system, sans-serif;
       background: black;
       overflow: hidden;
-      /* base font size for scaling */
       font-size: calc(12px + 0.8vw);
+      height: 100%;
     }
 
     #phoneOS {
@@ -42,19 +42,17 @@
       user-select: none;
     }
 
-	#homeScreen {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1em;
-  padding: 3em 1.25em 6em;
-  flex-grow: 1;
-  justify-items: center;   /* centers each icon in its column */
-  align-content: start;    /* packs all the rows up at the top */
-  overflow-y: auto;
-  box-sizing: border-box;
-}
-
-
+    #homeScreen {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1em;
+      padding: 3em 1.25em 6em;
+      flex-grow: 1;
+      justify-items: center;
+      align-content: start;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
 
     .appIcon {
       text-align: center;
@@ -65,7 +63,7 @@
     }
 
     .appIcon img {
-      width: 3.75em;  /* scales with font-size */
+      width: 3.75em;
       height: 3.75em;
       border-radius: 1em;
       margin-bottom: 0.3em;
@@ -82,7 +80,7 @@
       bottom: env(safe-area-inset-bottom, 15px);
       left: 1em;
       right: 1em;
-      height: 4.375em; /* 70px at 16px base scaled by font-size */
+      height: 4.375em;
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
       border-radius: 1.5em;
@@ -94,7 +92,7 @@
     }
 
     #dock .appIcon img {
-      width: 3.125em; /* 50px scaled */
+      width: 3.125em;
       height: 3.125em;
     }
 
@@ -108,8 +106,8 @@
       display: none;
       flex-direction: column;
       animation: fadeIn 0.3s ease;
-      overflow: auto;
-      padding: 1.25em 1.25em 1.5em;
+      overflow-y: auto;
+      padding: 1em 1.25em 2em;
       box-sizing: border-box;
       user-select: text;
     }
@@ -133,6 +131,16 @@
       cursor: pointer;
       user-select: none;
       font-size: 1em;
+      transition: background 0.2s ease;
+    }
+
+    button:not(:last-child) {
+      margin-right: 0.5em;
+    }
+
+    button:active {
+      background: #ddd;
+      transform: scale(0.97);
     }
 
     h2 {
@@ -141,32 +149,31 @@
     }
 
     /* Browser */
-    #browserApp input {
-      padding: 0.625em;
-      width: 80%;
-      margin-bottom: 0.625em;
+    #browserApp iframe {
+      width: 100%;
+      height: 60vh;
       border-radius: 0.625em;
       border: none;
-      font-size: 1em;
+      margin-top: 0.6em;
     }
 
-    iframe {
-      flex: 1;
+    #resizeSlider {
       width: 100%;
-      height: 18.75em; /* 300px at 16px base */
-      border: none;
-      border-radius: 0.625em;
-      margin-top: 0.625em;
+      margin-top: 0.5em;
     }
 
     /* Notepad */
     #noteText {
       width: 100%;
-      height: 18.75em;
+      height: 300px;
       border-radius: 0.625em;
       padding: 0.625em;
       font-size: 1em;
       font-family: monospace, monospace;
+      resize: vertical;
+      box-sizing: border-box;
+      margin-bottom: 1em;
+      flex-shrink: 0;
     }
 
     /* Messages */
@@ -220,13 +227,24 @@
       max-width: 18.75em;
       margin-bottom: 0.625em;
       font-size: 1em;
+      box-sizing: border-box;
     }
 
     /* Camera */
     video, canvas {
       width: 100%;
+      max-height: 60vh;
       border-radius: 0.625em;
-      margin-bottom: 0.625em;
+      object-fit: contain;
+      margin-bottom: 15px
+    }
+
+    input, textarea {
+      font-size: 1em;
+      padding: 0.6em;
+      border-radius: 0.5em;
+      border: none;
+      box-sizing: border-box;
     }
 
     /* Dialer styles */
@@ -292,7 +310,7 @@
   <!-- Status Bar -->
   <div id="statusBar">
     <div id="time">12:00</div>
-    <div>📶 🔋</div>
+    <div id="battery">🔋 --%</div>
   </div>
 
   <!-- Home Screen -->
@@ -342,6 +360,7 @@
     <h2>Browser</h2>
     <input type="text" id="urlInput" placeholder="Enter URL">
     <button onclick="goToSite()">Go</button>
+    <input type="range" id="resizeSlider" min="300" max="900" value="600" oninput="resizeIframe(this.value)">
     <iframe id="browserFrame" src="https://example.com"></iframe>
     <button onclick="closeApp('browserApp')">Home</button>
   </div>
@@ -357,9 +376,10 @@
   <div id="messagesApp" class="appScreen">
     <h2>Messages</h2>
     <div class="chat">
-      <div class="bubble them">Hey!</div>
-      <div class="bubble me">What's up?</div>
-      <div class="bubble them">Nothing much, just chillin 😎</div>
+      <div class="bubble them">yo!</div>
+      <div class="bubble me">wsp bro </div>
+      <div class="bubble me">what r u gonna be doing this week</div>
+      <div class="bubble them">nothin much, just chillin or go to the beach idk</div>
     </div>
     <button onclick="closeApp('messagesApp')">Home</button>
   </div>
@@ -369,7 +389,6 @@
     <h2>Settings</h2>
     <div class="setting"><span>WiFi</span><span>✅</span></div>
     <div class="setting"><span>Bluetooth</span><span>❌</span></div>
-    <div class="setting"><span>Battery</span><span>🔋 85%</span></div>
     <h3>Change Wallpaper</h3>
     <input type="file" accept="image/*" onchange="setWallpaper(event)">
     <button onclick="closeApp('settingsApp')">Home</button>
@@ -503,6 +522,51 @@
     link.download = "photo.png";
     link.href = canvas.toDataURL();
     link.click();
+  }
+
+  // Browser resize handler
+  const resizeHandle = document.getElementById('resizeHandle');
+  const browserFrame = document.getElementById('browserFrame');
+  let isResizing = false;
+  let lastY;
+
+  resizeHandle.addEventListener('mousedown', e => {
+    isResizing = true;
+    lastY = e.clientY;
+    e.preventDefault();
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!isResizing) return;
+    const dy = e.clientY - lastY;
+    lastY = e.clientY;
+    let newHeight = browserFrame.offsetHeight + dy;
+    if (newHeight < 100) newHeight = 100;
+    if (newHeight > window.innerHeight - 150) newHeight = window.innerHeight - 150;
+    browserFrame.style.height = newHeight + 'px';
+  });
+
+  window.addEventListener('mouseup', () => {
+    isResizing = false;
+  });
+
+  // Battery API
+  const batterySpan = document.getElementById("battery");
+
+if (navigator.getBattery) {
+  navigator.getBattery().then(battery => {
+    function updateLevel() {
+      batterySpan.textContent = `🔋 ${Math.round(battery.level * 100)}%`;
+    }
+    updateLevel();
+    battery.addEventListener("levelchange", updateLevel);
+  });
+} else {
+  batterySpan.textContent = "🔋 N/A";
+}
+
+function resizeIframe(val) {
+    document.getElementById("browserFrame").style.height = val + "px";
   }
 </script>
 </body>
