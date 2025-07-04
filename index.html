@@ -231,13 +231,15 @@
     }
 
     /* Camera */
-    video, canvas {
-      width: 100%;
-      max-height: 60vh;
-      border-radius: 0.625em;
-      object-fit: contain;
-      margin-bottom: 15px
-    }
+video, canvas {
+  width: 100%;
+  height: auto;
+  border-radius: 0.625em;
+  margin-bottom: 0.5em;  /* small gap between video and canvas */
+  display: block;        /* no inline spacing issues */
+}
+
+
 
     input, textarea {
       font-size: 1em;
@@ -302,6 +304,18 @@
       background: #a22;
       transform: scale(0.95);
     }
+    #cameraApp button {
+      margin-bottom: 15px;
+    }
+    #caperaApp canvas {
+      margin-bottom: 50px;
+    }
+    #cameraApp {
+  padding-bottom: 6em; /* or a bit more than dock height to create space */
+  box-sizing: border-box; /* ensure padding works as expected */
+  overflow-y: auto; /* allow scrolling if needed */
+}
+
   </style>
 </head>
 <body>
@@ -406,10 +420,10 @@
   <!-- Camera App -->
   <div id="cameraApp" class="appScreen">
     <h2>Camera</h2>
-    <video id="video" autoplay></video>
-    <canvas id="canvas"></canvas>
     <button onclick="takePhoto()">📸 Snap</button>
     <button onclick="closeApp('cameraApp')">Home</button>
+    <video id="video" autoplay></video>
+    <canvas id="canvas"></canvas>
   </div>
 
 </div>
@@ -512,17 +526,19 @@
   }
 
   function takePhoto() {
-    const video = document.getElementById("video");
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    ctx.drawImage(video, 0, 0);
-    const link = document.createElement("a");
-    link.download = "photo.png";
-    link.href = canvas.toDataURL();
-    link.click();
-  }
+  const video = document.getElementById("video");
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  const link = document.createElement("a");
+  link.download = "photo.png";
+  link.href = canvas.toDataURL();
+  link.click();
+}
+
 
   // Browser resize handler
   const resizeHandle = document.getElementById('resizeHandle');
