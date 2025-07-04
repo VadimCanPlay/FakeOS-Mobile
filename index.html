@@ -310,7 +310,7 @@
   <!-- Status Bar -->
   <div id="statusBar">
     <div id="time">12:00</div>
-    <div id="battery">🔋 --%</div>
+    <div id="battery">📶🔋</div>
   </div>
 
   <!-- Home Screen -->
@@ -549,21 +549,6 @@
   window.addEventListener('mouseup', () => {
     isResizing = false;
   });
-
-  // Battery API
-  const batterySpan = document.getElementById("battery");
-
-if (navigator.getBattery) {
-  navigator.getBattery().then(battery => {
-    function updateLevel() {
-      batterySpan.textContent = `🔋 ${Math.round(battery.level * 100)}%`;
-    }
-    updateLevel();
-    battery.addEventListener("levelchange", updateLevel);
-  });
-} else {
-  batterySpan.textContent = "🔋 N/A";
-}
 
 function resizeIframe(val) {
     document.getElementById("browserFrame").style.height = val + "px";
