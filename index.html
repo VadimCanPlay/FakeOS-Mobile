@@ -39,8 +39,12 @@
     #homeScreen {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: clamp(8px, 2vw, 20px);
-      padding: clamp(30px, 6vw, 60px) clamp(10px, 3vw, 40px) clamp(90px, 10vw, 100px);
+      gap: clamp(10px, 2vw, 20px);
+      padding: clamp(40px, 5vw, 60px) clamp(20px, 4vw, 40px) clamp(110px, 15vw, 130px);
+      flex-grow: 1;
+      overflow-y: auto;
+      box-sizing: border-box;
+      justify-items: center; /* THIS */
     }
 
     .appIcon {
